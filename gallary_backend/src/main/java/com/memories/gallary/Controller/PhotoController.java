@@ -1,4 +1,3 @@
-
 package com.memories.gallary.Controller;
 
 import java.io.IOException;
@@ -28,35 +27,38 @@ public class PhotoController {
         this.photoService = photoService;
     }
 
-    // Upload photo into a selected album
+    // Upload an image or video into a selected album
     @PostMapping("/upload")
     public ResponseEntity<?> uploadPhoto(
             @RequestParam("file") MultipartFile file,
             @RequestParam("albumId") Long albumId) {
 
         try {
-            var photo = photoService.uploadPhoto(file, albumId);
+            var media = photoService.uploadPhoto(file, albumId);
 
             return ResponseEntity.ok(
                     Map.of(
-                            "message", "Photo uploaded successfully",
-                            "id", photo.getId(),
-                            "filename", photo.getFileName(),
-                            "contentType", photo.getContentType()));
+                            "message", "Media uploaded successfully",
+                            "id", media.getId(),
+                            "filename", media.getFileName(),
+                            "contentType", media.getContentType()));
 
         } catch (Exception e) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", e.getMessage()));
+                    .body(Map.of("error",
+                            e.getMessage() != null
+                                    ? e.getMessage()
+                                    : "Media upload failed"));
         }
     }
 
-    // Get all photo filenames
+    // Get all uploaded filenames
     @GetMapping
     public ResponseEntity<?> getAllPhotos() {
         return ResponseEntity.ok(photoService.getAllPhotos());
     }
 
-    // Get photos belonging to a particular album
+    // Get images and videos belonging to an album
     @GetMapping("/album/{albumId}")
     public ResponseEntity<?> getPhotosByAlbum(
             @PathVariable Long albumId) {
@@ -71,7 +73,7 @@ public class PhotoController {
         }
     }
 
-    // View individual photo
+    // View or play an image/video
     @GetMapping("/{filename}")
     public ResponseEntity<?> getPhoto(
             @PathVariable String filename) {
@@ -85,7 +87,7 @@ public class PhotoController {
         }
     }
 
-    // Delete photo
+    // Delete an image or video
     @DeleteMapping("/{filename}")
     public ResponseEntity<?> deletePhoto(
             @PathVariable String filename) {
@@ -94,7 +96,7 @@ public class PhotoController {
             photoService.deletePhoto(filename);
 
             return ResponseEntity.ok(
-                    Map.of("message", "Photo deleted successfully"));
+                    Map.of("message", "Media deleted successfully"));
 
         } catch (Exception e) {
             return ResponseEntity.badRequest()

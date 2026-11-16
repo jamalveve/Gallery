@@ -27,6 +27,7 @@ public class Album {
     @Column(nullable = false)
     private String name;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private LocalDateTime createdAt;

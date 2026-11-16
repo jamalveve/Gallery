@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -49,10 +51,18 @@ public class PhotoService {
         }
 
         String contentType = file.getContentType();
+        String originalFileName = file.getOriginalFilename();
+
+        if (originalFileName != null &&
+                originalFileName.toLowerCase().endsWith(".mov")) {
+            contentType = "video/quicktime";
+        }
 
         if (contentType == null ||
-                !contentType.startsWith("image/")) {
-            throw new RuntimeException("Only image files are allowed");
+                !(contentType.startsWith("image/") ||
+                        contentType.startsWith("video/"))) {
+            throw new RuntimeException(
+                    "Only image and video files are allowed");
         }
 
         Album album = albumRepository.findById(albumId)
@@ -123,7 +133,32 @@ public class PhotoService {
                 .collect(Collectors.toList());
     }
 
-    // View individual photo
+    // // View individual photo
+    // public ResponseEntity<?> getPhoto(String filename)
+    // throws IOException {
+
+    // Path path = uploadDir.resolve(filename).normalize();
+
+    // if (!path.startsWith(uploadDir) ||
+    // !Files.isRegularFile(path)) {
+    // return ResponseEntity.notFound().build();
+    // }
+
+    // Resource resource = new UrlResource(path.toUri());
+
+    // String contentType = Files.probeContentType(path);
+
+    // MediaType mediaType = contentType != null &&
+    // contentType.startsWith("image/")
+    // ? MediaType.parseMediaType(contentType)
+    // : MediaType.APPLICATION_OCTET_STREAM;
+
+    // return ResponseEntity.ok()
+    // .contentType(mediaType)
+    // .body(resource);
+    // }
+
+    // View or play an image/video
     public ResponseEntity<?> getPhoto(String filename)
             throws IOException {
 
@@ -134,17 +169,40 @@ public class PhotoService {
             return ResponseEntity.notFound().build();
         }
 
+        // Find the saved media details in MySQL
+        Photo photo = photoRepository.findByFileName(filename)
+                .orElseThrow(() -> new RuntimeException("Media not found"));
+
         Resource resource = new UrlResource(path.toUri());
 
-        String contentType = Files.probeContentType(path);
+        // Get the content type saved in MySQL
+        String contentType = photo.getContentType();
 
-        MediaType mediaType = contentType != null &&
-                contentType.startsWith("image/")
-                        ? MediaType.parseMediaType(contentType)
-                        : MediaType.APPLICATION_OCTET_STREAM;
+        // If content type is missing or generic, try detecting it
+        if (contentType == null ||
+                contentType.equals("application/octet-stream")) {
+            contentType = Files.probeContentType(path);
+        }
+
+        MediaType mediaType;
+
+        try {
+            mediaType = contentType != null
+                    ? MediaType.parseMediaType(contentType)
+                    : MediaType.APPLICATION_OCTET_STREAM;
+        } catch (Exception e) {
+            mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        }
 
         return ResponseEntity.ok()
                 .contentType(mediaType)
+                .contentLength(Files.size(path))
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.inline()
+                                .filename(filename)
+                                .build()
+                                .toString())
                 .body(resource);
     }
 

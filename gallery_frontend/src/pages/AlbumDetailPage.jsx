@@ -70,7 +70,7 @@ export default function AlbumDetailPage() {
       const updatedPhotos = await getPhotosByAlbum(numericAlbumId);
       setPhotos(updatedPhotos);
 
-      setMessage(`${uploadedCount} photo(s) added successfully ❤️`);
+setMessage(`${uploadedCount} file(s) added successfully ❤️`);
     } catch (error) {
       // Refresh the photos in case some uploads succeeded.
       try {
@@ -89,8 +89,7 @@ export default function AlbumDetailPage() {
   }
 
   async function handleDelete(filename) {
-    if (!window.confirm("Delete this photo permanently?")) return;
-
+   if (!window.confirm("Delete this photo or video permanently?")) return;
     try {
       await deletePhoto(filename);
 
@@ -98,7 +97,7 @@ export default function AlbumDetailPage() {
         previousPhotos.filter((photo) => photo.filename !== filename)
       );
 
-      setMessage("Photo deleted successfully.");
+   setMessage("File deleted successfully.");
     } catch (error) {
       setMessage(error.message);
     }
@@ -145,6 +144,18 @@ export default function AlbumDetailPage() {
             onChange={handleUpload}
           />
         </label>
+        <label className="primary-button upload-button">
+  {uploading ? "Uploading..." : "＋ Upload Videos to This Album"}
+
+  <input
+    type="file"
+    accept="video/*,.mov,.mp4,.webm,.avi"
+    multiple
+    hidden
+    disabled={uploading}
+    onChange={handleUpload}
+  />
+</label>
 
         {message && <p className="status-message">{message}</p>}
       </div>
@@ -153,11 +164,24 @@ export default function AlbumDetailPage() {
         <div className="album-photos-grid">
           {photos.map((photo) => (
             <div className="album-photo" key={photo.id}>
-              <img
-                src={getPhotoUrl(photo.filename)}
-                alt={album.name}
-              />
-
+             {photo.contentType?.startsWith("video/") ? (
+  <video
+    controls
+    preload="metadata"
+    className="album-video"
+  >
+    <source
+      src={getPhotoUrl(photo.filename)}
+      type={photo.contentType}
+    />
+    Your browser does not support this video.
+  </video>
+) : (
+  <img
+    src={getPhotoUrl(photo.filename)}
+    alt={album.name}
+  />
+)}
               <button
                 onClick={() => handleDelete(photo.filename)}
                 aria-label="Delete photo"
