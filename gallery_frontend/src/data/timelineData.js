@@ -2,20 +2,17 @@
 const timelineData = [
   {
     id: 1,
+    albumId: 3,
     slug: "first-met",
     title: "First Met",
     date: "Jan 2020",
     description: "The beautiful day our paths crossed and our story began.",
     image: "photo-1516589178581-6cd7833ae3b2",
-
-    // Add uploaded photo filenames here.
-    photos: [
-      // "your-first-meet-photo.jpg",
-      // "another-first-meet-photo.jpg",
-    ],
+    photos: [],
   },
   {
     id: 2,
+    albumId: 4,
     slug: "first-date",
     title: "First Date",
     date: "Mar 2020",
@@ -25,6 +22,7 @@ const timelineData = [
   },
   {
     id: 3,
+    albumId: 5,
     slug: "fell-in-love",
     title: "Fell in Love",
     date: "Jun 2020",
@@ -34,6 +32,7 @@ const timelineData = [
   },
   {
     id: 4,
+    albumId: 6,
     slug: "engaged",
     title: "Engaged",
     date: "Dec 2022",
@@ -43,6 +42,7 @@ const timelineData = [
   },
   {
     id: 5,
+    albumId: 7,
     slug: "married",
     title: "Married",
     date: "Apr 2024",
@@ -53,3 +53,4 @@ const timelineData = [
 ];
 
 export default timelineData;
+  
