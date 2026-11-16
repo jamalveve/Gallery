@@ -14,7 +14,11 @@ import com.memories.gallary.Service.MemoryService;
 
 @RestController
 @RequestMapping("/api/memories")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://gallery-flame-nine-95.vercel.app"
+})
+
 public class MemoryController {
 
     private final MemoryService memoryService;

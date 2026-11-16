@@ -18,7 +18,11 @@ import com.memories.gallary.Service.PhotoService;
 
 @RestController
 @RequestMapping("/api/photos")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://gallery-flame-nine-95.vercel.app"
+})
+
 public class PhotoController {
 
     private final PhotoService photoService;
