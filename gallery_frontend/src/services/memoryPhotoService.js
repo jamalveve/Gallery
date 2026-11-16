@@ -1,6 +1,5 @@
 
-const API = "http://localhost:8080/api/memory-photos";
-
+const API = `${import.meta.env.VITE_API_BASE_URL || "http://localhost:8080"}/api/memory-photos`;
 // Upload one photo for a memory
 export async function uploadMemoryPhoto(file, memoryId) {
   const formData = new FormData();

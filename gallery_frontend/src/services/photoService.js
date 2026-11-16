@@ -1,7 +1,10 @@
 
-const API = "http://localhost:8080/api/photos";
-const ALBUM_API = "http://localhost:8080/api/albums";
+// const API = "http://localhost:8080/api/photos";
+// const ALBUM_API = "http://localhost:8080/api/albums";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const API = `${API_BASE}/api/photos`;
+const ALBUM_API = `${API_BASE}/api/albums`;
 // Get all albums
 export async function getAlbums() {
   const response = await fetch(ALBUM_API);
