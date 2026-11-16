@@ -1,8 +1,7 @@
 
 import useCountdown from "../hooks/useCountdown";
 
-const SPECIAL_DATE = "2027-04-15T00:00:00";
-
+const SPECIAL_DATE = "2022-04-01T00:00:00";
 export default function Countdown() {
   const timeLeft = useCountdown(SPECIAL_DATE);
 
